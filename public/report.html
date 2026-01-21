@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report - SQL Web App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        @media print {
+
+            header,
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="font-weight:bold;">Filter Report</div>
+            <div class="nav-links">
+                <button class="btn btn-secondary action-btn" onclick="window.location.href='dashboard.html'">Back to
+                    Dashboard</button>
+            </div>
+        </header>
+
+        <div class="card" style="margin-bottom: 2rem; max-width: 100%;">
+            <div class="form-group no-print">
+                <label for="ageFilter">Filter by Age:</label>
+                <input type="number" id="ageFilter" class="form-control" placeholder="Enter age to filter...">
+            </div>
+
+            <div class="data-table-container" style="box-shadow:none; padding:0;">
+                <table style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Place</th>
+                            <th>Last Update By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/report.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+
+</html>

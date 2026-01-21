@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log History - SQL Web App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="font-weight:bold;">Log History</div>
+            <div class="nav-links">
+                <button class="btn btn-secondary action-btn" onclick="window.location.href='dashboard.html'">Back to
+                    Dashboard</button>
+            </div>
+        </header>
+
+        <div class="card" style="max-width: 100%;">
+            <div class="data-table-container" style="box-shadow:none; padding:0;">
+                <table style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            const response = await fetch('/api/logs');
+            const logs = await response.json();
+            const tbody = document.getElementById('logsTableBody');
+
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(log.timestamp).toLocaleString()}</td>
+                    <td><span class="badge ${log.action}">${log.action}</span></td>
+                    <td>${log.username}</td>
+                    <td>${log.details}</td>
+                 `;
+                tbody.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Report</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: white;
+            color: black;
+        }
+
+        .report-card {
+            max-width: 600px;
+            margin: 2rem auto;
+            border: 1px solid #ccc;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #333;
+            padding-bottom: 1rem;
+        }
+
+        .photo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .photo-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            width: 150px;
+        }
+
+        .no-print {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            .report-card {
+                border: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="report-card">
+        <div class="report-header">
+            <h1>Single Person Report</h1>
+        </div>
+        <div class="photo-container">
+            <img id="reportPhoto" src="" alt="Person Photo" style="display:none;">
+            <div id="noPhoto" style="display:none;">No Photo Available</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Name:</div>
+            <div id="reportName"></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Age:</div>
+            <div id="reportAge"></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Place:</div>
+            <div id="reportPlace"></div>
+        </div>
+
+        <div class="no-print">
+            <button class="btn" onclick="window.print()">Print Report</button>
+            <button class="btn btn-secondary" onclick="window.close()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) return alert('No ID provided');
+
+            try {
+                // Fetch all people and find the one (simpler than making a new GET /api/people/:id endpoint, though less efficient)
+                // Actually, I can use the existing GET /api/people endpoint and filter on client side or add ID support.
+                // The current GET /api/people supports filtering by age but not ID specifically in the query params publicly? 
+                // Wait, server.js has `GET /api/people` (all) and `GET /api/people?age=...`.
+                // I don't have `GET /api/people/:id` defined in the server code snippet I saw earlier for *fetching* single? 
+                // Checking server.js... `app.get('/api/people', ...)` and `app.put('/api/people/:id')`.
+                // I should add `app.get('/api/people/:id')` to server for cleanliness, OR just fetch all and find. 
+                // Fetching all is fine for this scale.
+
+                const response = await fetch('/api/people');
+                const people = await response.json();
+                const person = people.find(p => p.id == id);
+
+                if (person) {
+                    document.getElementById('reportName').textContent = person.name;
+                    document.getElementById('reportAge').textContent = person.age;
+                    document.getElementById('reportPlace').textContent = person.place;
+
+                    if (person.photo_url) {
+                        document.getElementById('reportPhoto').src = person.photo_url;
+                        document.getElementById('reportPhoto').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('noPhoto').style.display = 'block';
+                    }
+
+                    // Auto print
+                    // setTimeout(() => window.print(), 500);
+                } else {
+                    document.body.innerHTML = '<h1>Person not found</h1>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    </script>
+</body>
+
+</html>
